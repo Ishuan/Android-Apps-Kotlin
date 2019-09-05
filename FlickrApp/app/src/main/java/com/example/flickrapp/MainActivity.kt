@@ -5,22 +5,29 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerLayoutManager: RecyclerView.LayoutManager
+    private lateinit var recyclerAdapter: RecyclerView.Adapter<*>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
 
         val model = ViewModelProviders.of(this)[FlickrDataViewModel::class.java]
         model.getData().observe(this, Observer<ArrayList<FlickerData>> {
-            for(item in it){
-                Log.d("MainActivity","***************")
-                Log.d("MainActivity",item.title)
-                Log.d("MainActivity",item.author)
-                Log.d("MainActivity",item.media.m)
+            recyclerLayoutManager = LinearLayoutManager(this)
+            recyclerAdapter = Adapter(it)
+
+            recyclerView = findViewById<RecyclerView>(R.id.recyclerView).apply {
+                setHasFixedSize(true)
+                layoutManager = recyclerLayoutManager
+                adapter = recyclerAdapter
             }
         })
     }
